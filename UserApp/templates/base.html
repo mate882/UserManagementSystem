@@ -55,7 +55,7 @@
             margin: 0;
         }
 
-        nav ul li a {
+        nav ul li a{
             color: white;
             text-decoration: none;
             padding: 8px 16px;
@@ -63,7 +63,20 @@
             transition: background-color 0.3s;
         }
 
+        nav button{
+            color: rgb(123, 121, 121);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-top: -20px;
+            transition: background-color 0.3s;
+        }
+
         nav ul li a:hover {
+            background-color: #34495e;
+        }
+
+        nav button:hover {
             background-color: #34495e;
         }
 
@@ -325,7 +338,12 @@
                     {% if user.role in 'admin,moderator,writer' %}
                         <li><a href="{% url 'create_article' %}">Write Article</a></li>
                     {% endif %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li>
+                        <form method="POST" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit">Logout</button>
+                        </form>
+                    </li>
                 </ul>
                 <div class="user-info">
                     Welcome, {{ user.username }}
