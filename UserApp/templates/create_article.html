@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Article{% endblock %}
+
+{% block content %}
+    <h1>Create New Article</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.content.id_for_label }}">Content:</label>
+            {{ form.content }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.is_published.id_for_label }}">
+                {{ form.is_published }} Publish immediately
+            </label>
+        </div>
+        {% if form.errors %}
+            <div class="messages">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li class="error">{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <button type="submit" class="btn btn-success">Create Article</button>
+        <a href="{% url 'dashboard' %}" class="btn">Cancel</a>
+    </form>
+{% endblock %}

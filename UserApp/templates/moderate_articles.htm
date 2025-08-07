@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Moderate Articles{% endblock %}
+
+{% block content %}
+    <h1>Moderate Articles</h1>
+    
+    {% if articles %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                <tr>
+                    <td>{{ article.title }}</td>
+                    <td>
+                        {{ article.author.username }}
+                        <span class="role-badge role-{{ article.author.role }}">{{ article.author.get_role_display }}</span>
+                    </td>
+                    <td>
+                        {% if article.is_published %}
+                            <span class="status-published">Published</span>
+                        {% else %}
+                            <span class="status-unpublished">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ article.created_at|date:"M d, Y" }}</td>
+                    <td>{{ article.updated_at|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'article_detail' article.id %}" class="btn btn-small">View</a>
+                        <a href="{% url 'edit_article' article.id %}" class="btn btn-small btn-warning">Edit</a>
+                        {% if article.is_published %}
+                            <a href="{% url 'toggle_article_status' article.id %}" 
+                               class="btn btn-small btn-danger">Unpublish</a>
+                        {% else %}
+                            <a href="{% url 'toggle_article_status' article.id %}" 
+                               class="btn btn-small btn-success">Publish</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="card">
+            <p>No articles to moderate.</p>
+        </div>
+    {% endif %}
+{% endblock %}

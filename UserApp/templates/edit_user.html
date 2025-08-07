@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+    <h1>Edit User: {{ user.username }}</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Username:</label>
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.role.id_for_label }}">Role:</label>
+            {{ form.role }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.is_active.id_for_label }}">
+                {{ form.is_active }} Active User
+            </label>
+        </div>
+        {% if form.errors %}
+            <div class="messages">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li class="error">{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <button type="submit" class="btn">Update User</button>
+        <a href="{% url 'manage_users' %}" class="btn">Cancel</a>
+    </form>
+{% endblock %}

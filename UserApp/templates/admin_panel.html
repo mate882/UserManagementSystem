@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+    <h1>Admin Panel</h1>
+    
+    <div class="grid">
+        <div class="card stats">
+            <h3>{{ users.count }}</h3>
+            <p>Total Users</p>
+        </div>
+        
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <a href="{% url 'manage_users' %}" class="btn">Manage Users</a>
+            <a href="{% url 'moderate_articles' %}" class="btn btn-warning">Moderate Content</a>
+        </div>
+    </div>
+
+    <h2>User Statistics</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for role_choice in users.model.ROLE_CHOICES %}
+                {% with role_users=users|length %}
+                    <tr>
+                        <td><span class="role-badge role-{{ role_choice.0 }}">{{ role_choice.1 }}</span></td>
+                        <td>{{ users|length }}</td>
+                        <td>{% widthratio users|length users.count 100 %}%</td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Recent Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users|slice:":10" %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td><span class="role-badge role-{{ user.role }}">{{ user.get_role_display }}</span></td>
+                <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    {% if user.is_active %}
+                        <span class="status-published">Active</span>
+                    {% else %}
+                        <span class="status-unpublished">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

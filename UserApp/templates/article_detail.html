@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+    <article>
+        <h1>{{ article.title }}</h1>
+        
+        <div class="article-meta">
+            <p>
+                By <strong>{{ article.author.username }}</strong> 
+                <span class="role-badge role-{{ article.author.role }}">{{ article.author.get_role_display }}</span>
+            </p>
+            <p>
+                Published: {{ article.created_at|date:"F d, Y" }}
+                {% if article.updated_at != article.created_at %}
+                    | Updated: {{ article.updated_at|date:"F d, Y" }}
+                {% endif %}
+            </p>
+            <p>
+                Status: 
+                {% if article.is_published %}
+                    <span class="status-published">Published</span>
+                {% else %}
+                    <span class="status-unpublished">Draft</span>
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="article-content">
+            {{ article.content|linebreaks }}
+        </div>
+        
+        <div>
+            {% if user.role in 'admin,moderator' or article.author == user %}
+                <a href="{% url 'edit_article' article.id %}" class="btn btn-warning">Edit Article</a>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="btn">Back to Dashboard</a>
+        </div>
+    </article>
+{% endblock %}

@@ -1,0 +1,86 @@
+<!-- templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    
+    <div class="grid">
+        <div class="card stats">
+            <h3>{{ articles.count }}</h3>
+            <p>
+                {% if user.role == 'writer' %}
+                    Your Articles
+                {% else %}
+                    Total Articles
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="card">
+            <h3>Your Role</h3>
+            <p>You are logged in as: <span class="role-badge role-{{ user.role }}">{{ user.get_role_display }}</span></p>
+            <div style="margin-top: 15px;">
+                {% if user.role == 'admin' %}
+                    <p>You can manage all users and content.</p>
+                {% elif user.role == 'moderator' %}
+                    <p>You can moderate content and manage articles.</p>
+                {% elif user.role == 'writer' %}
+                    <p>You can create and edit your own articles.</p>
+                {% else %}
+                    <p>You can view published content.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <h2>Articles</h2>
+    
+    {% if user.role in 'admin,moderator,writer' %}
+        <a href="{% url 'create_article' %}" class="btn btn-success">Create New Article</a>
+    {% endif %}
+    
+    {% if articles %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                <tr>
+                    <td>{{ article.title }}</td>
+                    <td>{{ article.author.username }}</td>
+                    <td>
+                        {% if article.is_published %}
+                            <span class="status-published">Published</span>
+                        {% else %}
+                            <span class="status-unpublished">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ article.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'article_detail' article.id %}" class="btn btn-small">View</a>
+                        {% if user.role in 'admin,moderator' or article.author == user %}
+                            <a href="{% url 'edit_article' article.id %}" class="btn btn-small btn-warning">Edit</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="card">
+            <p>No articles available.</p>
+            {% if user.role in 'admin,moderator,writer' %}
+                <a href="{% url 'create_article' %}" class="btn">Create your first article</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
